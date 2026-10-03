@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inside Indus | Indus University</title>
+  <meta name="description" content="Inside Indus - Built by students for students. Smart campus navigation and discovery platform for Indus University. Find classrooms, lecture halls, laboratories, faculty members, and campus facilities.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%23C86D51%22/><text x=%2216%22 y=%2222%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2218%22 font-family=%22system-ui%22 font-weight=%22800%22>II</text></svg>">
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem("inside_indus_theme");
+        if (savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ======================================================================
+       HEADER & NAVBAR
+       ====================================================================== -->
+  <header class="site-header">
+    <div class="container navbar">
+      <!-- Left: Logo & Tagline -->
+      <div class="brand-wrapper" onclick="window.CampusGo.navigateTo('home')" title="Inside Indus - Home">
+        <div class="brand-icon" aria-label="Inside Indus Navigation Logo">
+          <!-- Inside Indus Logo: Navigation Pin + Letter "I" -->
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 3.5C12.2 3.5 7.5 8.2 7.5 14C7.5 21.4 16.6 31.4 17.3 32.2C17.7 32.6 18.3 32.6 18.7 32.2C19.4 31.4 28.5 21.4 28.5 14C28.5 8.2 23.8 3.5 18 3.5Z" fill="#FFFFFF"/>
+            <circle cx="18" cy="10.5" r="2.1" fill="#C86D51"/>
+            <rect x="16.2" y="14.2" width="3.6" height="8.2" rx="1.8" fill="#C86D51"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">Inside Indus</span>
+          <span class="brand-tagline">Built by students for students</span>
+        </div>
+      </div>
+
+      <!-- Desktop Nav Menu (Admin removed from student navbar) -->
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#home" class="nav-link active" data-view="home">Home</a></li>
+          <li><a href="#free-rooms" class="nav-link" data-view="free-rooms">Free Classroom</a></li>
+          <li><a href="#map" class="nav-link" data-view="map">Map</a></li>
+          <li><a href="#classrooms" class="nav-link" data-view="classrooms">Classrooms</a></li>
+          <li><a href="#labs" class="nav-link" data-view="labs">Labs</a></li>
+          <li><a href="#faculty" class="nav-link" data-view="faculty">Faculty</a></li>
+          <li><a href="#facilities" class="nav-link" data-view="facilities">Facilities</a></li>
+        </ul>
+      </nav>
+
+      <!-- Right: Karma & Theme Toggle (Dark / Light Mode) -->
+      <div class="nav-actions">
+        <div id="karma-badge" class="karma-badge-btn" onclick="window.CampusGo.navigateTo('profile')" title="Student Karma Points" aria-label="Student Karma Points" role="button" tabindex="0">
+          <span id="karma-points-display">⭐ 0 Karma</span>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle dark/light mode" title="Switch to dark mode" onclick="window.CampusGo.toggleTheme()">
+          <span class="theme-icon" id="theme-toggle-icon" aria-hidden="true">🌙</span>
+          <span class="theme-text" id="theme-toggle-text">Dark</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       MAIN CONTENT (SINGLE-PAGE APPLICATION VIEWS)
+       ====================================================================== -->
+  <main id="main-content">
+
+    <!-- ==========================================
+         VIEW 1: HOMEPAGE (#home)
+         ========================================== -->
+    <section id="view-home" class="view-section active">
+
+      <!-- 1. HERO SECTION -->
+      <div class="hero-section">
+        <div class="container hero-layout">
+          <!-- Left: Headings, Search & Shortcuts -->
+          <div class="hero-left">
+            <span class="hero-badge">EXPLORE • NAVIGATE • REACH</span>
+            <h1 class="hero-title">Inside Indus</h1>
+            <p class="hero-tagline">Built by students for students</p>
+            <p class="hero-description">Find classrooms, labs, faculty and campus facilities with ease.</p>
+
+            <!-- Large Search Bar: "Where do you want to go?" -->
+            <div class="search-container">
+              <label class="search-prompt-label" for="hero-search-input">Where do you want to go?</label>
+              <div class="search-bar-wrapper">
+                <span class="search-icon-leading">🔍</span>
+                <input type="text" 
+                       id="hero-search-input" 
+                       class="search-input" 
+                       placeholder="Search classrooms, labs, faculty, facilities..." 
+                       autocomplete="off">
+                <button class="btn btn-primary search-btn" id="hero-search-btn">Search</button>
+              </div>
+
+              <!-- Instant Search Dropdown -->
+              <div class="search-dropdown" id="search-results-dropdown"></div>
+            </div>
+
+            <!-- SEARCH CATEGORY SHORTCUTS (Canteen removed from shortcuts only) -->
+            <div class="category-shortcuts">
+              <span class="shortcuts-label">Category Shortcuts:</span>
+              <button class="category-pill" onclick="window.CampusGo.navigateTo('classrooms')">Classrooms / Lecture Halls</button>
+              <button class="category-pill" onclick="window.CampusGo.navigateTo('labs')">Labs</button>
+              <button class="category-pill" onclick="window.CampusGo.navigateTo('faculty')">Faculty</button>
+              <button class="category-pill" onclick="window.CampusGo.viewDetails('FACILITY-LIB', 'Library')">Library</button>
+            </div>
+          </div>
+
+          <!-- Right: Hero Visual Showing Purpose of Inside Indus -->
+          <div class="hero-right">
+            <div class="hero-image-card">
+              <img src="assets/images/hero_campus.jpg" 
+                   alt="Students navigating Indus University campus" 
+                   class="hero-campus-img"
+                   loading="eager">
+              <div class="hero-image-badge">
+                <span class="badge-dot"></span> Quick Campus Navigation
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- 2. QUICK ACCESS SECTION (8 Cards) -->
+      <section class="section">
+        <div class="container">
+          <div class="section-header text-center">
+            <span class="section-tag">Direct Campus Shortcuts</span>
+            <h2 class="section-title">Quick Access</h2>
+            <p class="section-subtitle">Find classrooms, available rooms, laboratories, faculty, and university services.</p>
+          </div>
+
+          <div class="quick-access-grid">
+            <!-- 1. Classrooms / Lecture Halls -->
+            <div class="qa-card" onclick="window.CampusGo.navigateTo('classrooms')">
+              <div class="qa-icon-box">🏫</div>
+              <h3 class="qa-title">Classrooms / Lecture Halls</h3>
+              <p class="qa-desc">Find your classroom</p>
+              <span class="qa-action">Explore Classrooms &rarr;</span>
+            </div>
+
+            <!-- 2. Free Rooms -->
+            <div class="qa-card" onclick="window.CampusGo.navigateTo('free-rooms')">
+              <div class="qa-icon-box">🟢</div>
+              <h3 class="qa-title">Free Rooms</h3>
+              <p class="qa-desc">Find available classrooms</p>
+              <span class="qa-action">View Free Slots &rarr;</span>
+            </div>
+
+            <!-- 3. Labs -->
+            <div class="qa-card" onclick="window.CampusGo.navigateTo('labs')">
+              <div class="qa-icon-box">🧪</div>
+              <h3 class="qa-title">Labs</h3>
+              <p class="qa-desc">Find laboratories</p>
+              <span class="qa-action">Explore Labs &rarr;</span>
+            </div>
+
+            <!-- 4. Faculty -->
+            <div class="qa-card" onclick="window.CampusGo.navigateTo('faculty')">
+              <div class="qa-icon-box">👨‍🏫</div>
+              <h3 class="qa-title">Faculty</h3>
+              <p class="qa-desc">Find faculty</p>
+              <span class="qa-action">Find Faculty &rarr;</span>
+            </div>
+
+            <!-- 5. Library -->
+            <div class="qa-card" onclick="window.CampusGo.viewDetails('FACILITY-LIB', 'Library')">
+              <div class="qa-icon-box">📚</div>
+              <h3 class="qa-title">Library</h3>
+              <p class="qa-desc">Find the library</p>
+              <span class="qa-action">View Library Location &rarr;</span>
+            </div>
+
+            <!-- 6. Canteen -->
+            <div class="qa-card" onclick="window.CampusGo.viewDetails('FACILITY-CAN', 'Canteen')">
+              <div class="qa-icon-box">🍴</div>
+              <h3 class="qa-title">Canteen</h3>
+              <p class="qa-desc">Find the canteen</p>
+              <span class="qa-action">View Canteen &rarr;</span>
+            </div>
+
+            <!-- 7. Auditorium -->
+            <div class="qa-card" onclick="window.CampusGo.viewDetails('FACILITY-AUD', 'Auditorium')">
+              <div class="qa-icon-box">🎤</div>
+              <h3 class="qa-title">Auditorium</h3>
+              <p class="qa-desc">Find the auditorium</p>
+              <span class="qa-action">View Auditorium &rarr;</span>
+            </div>
+
+            <!-- 8. Offices -->
+            <div class="qa-card" onclick="window.CampusGo.viewDetails('FACILITY-ADM', 'Offices')">
+              <div class="qa-icon-box">🏢</div>
+              <h3 class="qa-title">Offices</h3>
+              <p class="qa-desc">Find administration offices</p>
+              <span class="qa-action">View Offices &rarr;</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. EXPLORE CAMPUS (Custom 2D Map) -->
+      <section class="section section-alt">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-tag">Interactive 2D Campus Map</span>
+            <h2 class="section-title">Explore Campus</h2>
+            <p class="section-subtitle">Find buildings and important campus locations.</p>
+          </div>
+
+          <div class="map-card-wrapper">
+            <!-- Map Toolbar with Zoom Controls -->
+            <div class="map-toolbar">
+              <div class="map-toolbar-left">
+                <span class="map-toolbar-title">📍 Indus University Campus Map</span>
+              </div>
+              <div class="map-toolbar-right">
+                <button class="map-ctrl-btn" id="map-zoom-out" title="Zoom Out">−</button>
+                <span class="zoom-label" id="map-zoom-level">100%</span>
+                <button class="map-ctrl-btn" id="map-zoom-in" title="Zoom In">+</button>
+                <button class="map-ctrl-btn" id="map-zoom-reset" title="Reset View">↺</button>
+              </div>
+            </div>
+
+            <!-- Interactive Campus Map Image -->
+            <div class="map-viewport" id="map-viewport-container" style="height: auto; min-height: 320px; padding: 0; overflow: hidden; position: relative;">
+              <img src="assets/images/campus_map.jpg"
+                   alt="Indus University Campus Map showing Main Gate, Faculty Car Parking, Main Campus Road, Box Cricket, Volleyball Ground, Tree Sitting, Canteen, Badminton Court, Bhanwan Building (BB), and Main Building (MB)"
+                   style="width: 100%; height: auto; display: block; border-radius: var(--radius-md);"
+                   loading="lazy">
+
+              <!-- In-Map Building Detail Card -->
+              <div class="building-info-card" id="building-info-card">
+                <div class="bldg-card-header">
+                  <span class="bldg-card-badge" id="bldg-card-code">BB</span>
+                  <button class="bldg-card-close" onclick="window.CampusGo.closeBuildingCard()">✕</button>
+                </div>
+                <h4 class="bldg-card-title" id="bldg-card-title">BHANWAN BUILDING</h4>
+                <p class="bldg-card-desc" id="bldg-card-desc">Academic building with 5 floors.</p>
+
+                <div style="font-size: 0.8rem; font-weight: 700; color: var(--navy-secondary); margin-bottom: 0.25rem;">
+                  Known Locations:
+                </div>
+                <ul class="bldg-locations-list" id="bldg-card-locations">
+                  <!-- Populated dynamically -->
+                </ul>
+
+                <div class="bldg-card-actions">
+                  <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="window.CampusGo.openFloorExplorer(document.getElementById('bldg-card-code').textContent)">
+                    Explore Floors
+                  </button>
+                  <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="window.CampusGo.zoomIntoSelectedBuilding()">
+                    Zoom In
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. RECENT SEARCHES (Below Map) -->
+          <div class="recent-searches-box">
+            <div class="recent-header">
+              <span class="recent-title"><span>🕒</span> Recent Searches</span>
+              <button class="btn btn-outline btn-xs" onclick="window.CampusGo.clearRecentSearches()">Clear</button>
+            </div>
+            <div class="recent-chips-list" id="recent-searches-list">
+              <!-- Populated dynamically from localStorage -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ==========================================
+         VIEW 2: FREE CLASSROOMS (#free-rooms)
+         ========================================== -->
+    <section id="view-free-rooms" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Live Student Availability</span>
+          <h1 class="view-title">Free Classrooms</h1>
+          <p class="view-subtitle">Find available classrooms for self-study and student work. Submit a classroom's availability to earn +5 Karma Points ⭐</p>
+        </div>
+      </div>
+
+      <div class="container free-rooms-container">
+        <!-- Availability Filter / Submission Bar -->
+        <div class="free-filter-box">
+          <div class="free-filter-action-row">
+            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0;">
+              Know a classroom that's free? Report it and earn <strong style="color: var(--accent-karma);">+5 Karma Points ⭐</strong>
+            </p>
+            <button class="btn btn-primary" onclick="window.CampusGo.openSubmitFreeRoomModal()">
+              + Submit Availability
+            </button>
+          </div>
+        </div>
+
+        <div class="free-status-banner">
+          <strong>Notice:</strong> Rooms are only displayed as free once student availability has been confirmed and submitted. If you find an occupied room marked free, please click <em>Report Occupied</em>.
+        </div>
+
+        <!-- Available Rooms Cards Grid -->
+        <div class="cards-grid" id="free-rooms-grid">
+          <!-- Populated dynamically from localStorage -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 3: CAMPUS MAP FULLSCREEN (#map)
+         ========================================== -->
+    <section id="view-map" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Cartography & Grounds</span>
+          <h1 class="view-title">Campus Map</h1>
+          <p class="view-subtitle">Interactive 2D campus map showing confirmed outdoor navigation points and buildings.</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="map-card-wrapper" style="margin-bottom: 2rem;">
+          <div class="map-toolbar">
+            <span class="map-toolbar-title">Indus University Campus Grounds</span>
+            <div class="map-toolbar-right">
+              <button class="btn btn-outline btn-sm" onclick="window.CampusGo.openFloorExplorer('MB')">Explore MB Floors</button>
+              <button class="btn btn-primary btn-sm" onclick="window.CampusGo.openFloorExplorer('BB')">Explore BB Floors</button>
+            </div>
+          </div>
+          <div class="map-viewport" style="height: auto; min-height: 320px; padding: 0; overflow: hidden; position: relative;">
+            <img src="assets/images/campus_map.jpg" 
+                 alt="Indus University Campus Grounds Map" 
+                 style="width: 100%; height: auto; display: block; border-radius: var(--radius-md);" 
+                 loading="lazy">
+          </div>
+        </div>
+
+        <!-- Navigation Structure Info -->
+        <div class="indoor-nav-notice">
+          <strong>Indoor Navigation Structure:</strong> Building → Floor → Stair → Corridor → Room → Direction.
+          Stairs only. No lifts. Exact staircase and corridor information coming soon.
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 4: DEDICATED SEARCH (#search)
+         ========================================== -->
+    <section id="view-search" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Keyword Directory</span>
+          <h1 class="view-title">Campus Search</h1>
+          <p class="view-subtitle" id="search-query-display">Search classrooms, labs, faculty, facilities...</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <!-- Search Input Bar -->
+        <div class="filter-bar">
+          <div style="flex: 1; display: flex; gap: 0.5rem;">
+            <input type="text" id="dedicated-search-input" class="form-input" style="flex: 1;" placeholder="Search by name, room number, faculty, or building...">
+            <button class="btn btn-primary" id="dedicated-search-btn">Search</button>
+          </div>
+        </div>
+
+        <!-- Search Results Grid -->
+        <div class="cards-grid" id="search-page-results">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 5: CLASSROOMS (#classrooms)
+         ========================================== -->
+    <section id="view-classrooms" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Academic Rooms</span>
+          <h1 class="view-title">Classrooms & Lecture Halls</h1>
+          <p class="view-subtitle">Confirmed lecture halls and rooms in Main Building (MB) and Bhanwan Building (BB).</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <!-- Filters -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <span class="filter-label">Building:</span>
+            <select id="filter-classrooms-building" class="form-select" onchange="window.CampusGo.renderClassrooms()">
+              <option value="all">All Buildings</option>
+              <option value="MB">Main Building (MB)</option>
+              <option value="BB">Bhanwan Building (BB)</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Air Conditioning:</span>
+            <select id="filter-classrooms-ac" class="form-select" onchange="window.CampusGo.renderClassrooms()">
+              <option value="all">All Classrooms</option>
+              <option value="ac">AC Only</option>
+              <option value="non-ac">Non-AC Only</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Floor:</span>
+            <select id="filter-classrooms-floor" class="form-select" onchange="window.CampusGo.renderClassrooms()">
+              <option value="all">All Floors</option>
+              <option value="ground">Ground Floor</option>
+              <option value="1st">1st Floor</option>
+              <option value="2nd">2nd Floor</option>
+              <option value="3rd">3rd Floor</option>
+              <option value="5th">5th Floor</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="classrooms-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 6: LABS (#labs)
+         ========================================== -->
+    <section id="view-labs" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Practical & Research</span>
+          <h1 class="view-title">Laboratories</h1>
+          <p class="view-subtitle">Official computer and practical laboratories in Bhanwan Building (BB).</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="cards-grid" id="labs-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 7: FACULTY (#faculty)
+         ========================================== -->
+    <section id="view-faculty" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Academic Staff</span>
+          <h1 class="view-title">Faculty Directory</h1>
+          <p class="view-subtitle">Indus University faculty members. Office locations are shown where officially confirmed. Book an appointment below.</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="filter-bar">
+          <div class="filter-group" style="flex: 1;">
+            <span class="filter-label">Filter Faculty:</span>
+            <input type="text" id="faculty-filter-input" class="form-input" style="flex: 1;" placeholder="Search faculty name..." oninput="window.CampusGo.renderFaculty()">
+          </div>
+        </div>
+
+        <div class="cards-grid" id="faculty-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 8: FACILITIES & CAFES (#facilities)
+         ========================================== -->
+    <section id="view-facilities" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Campus Amenities</span>
+          <h1 class="view-title">Facilities & Cafes</h1>
+          <p class="view-subtitle">Central library, auditorium, administration offices, canteen, and campus food outlets.</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <span class="filter-label">Filter Category:</span>
+            <select id="filter-facilities-category" class="form-select" onchange="window.CampusGo.renderFacilities()">
+              <option value="all">All Facilities & Cafes</option>
+              <option value="Library">Library</option>
+              <option value="Auditorium">Auditorium</option>
+              <option value="Offices">Offices</option>
+              <option value="Canteen">Canteen</option>
+              <option value="Food">Food & Cafes</option>
+              <option value="Landmark">Landmarks</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="facilities-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 9: USER PROFILE (#profile)
+         ========================================== -->
+    <section id="view-profile" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Student Portal</span>
+          <h1 class="view-title">My Profile</h1>
+          <p class="view-subtitle">Manage your saved favorites, recent searches, and campus activity.</p>
+        </div>
+      </div>
+
+      <div class="container" style="max-width: 800px;">
+
+        <!-- Student Profile Card (always shown, no login required) -->
+        <div id="profile-user-card">
+          <div class="item-card" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <div class="avatar-nav" style="width: 52px; height: 52px; font-size: 1.35rem;">S</div>
+              <div>
+                <h3 style="font-size: 1.25rem; color: var(--navy-secondary);">Student</h3>
+                <span style="font-size: 0.875rem; color: var(--text-muted);">Indus University</span>
+                <div style="margin-top: 0.35rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <span class="badge badge-ac">STUDENT</span>
+                  <span class="karma-badge-btn" style="cursor: default;" title="Student Karma Points: Earned by reporting free classrooms">
+                    <span id="profile-karma-points-display">⭐ 0 Karma</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- My Favorites Card -->
+          <div class="item-card" style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.15rem; color: var(--navy-secondary); margin-bottom: 1rem;">⭐ My Favorites</h3>
+            <div id="profile-favorites-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Recent Searches Card -->
+          <div class="item-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h3 style="font-size: 1.15rem; color: var(--navy-secondary);">🕒 Recent Searches</h3>
+              <button class="btn btn-outline btn-xs" onclick="window.CampusGo.clearRecentSearches()">Clear</button>
+            </div>
+            <div class="recent-chips-list" id="profile-recent-searches">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 10: ADMIN PORTAL (#admin)
+         ========================================== -->
+    <section id="view-admin" class="view-section">
+      <div class="view-header">
+        <div class="container">
+          <span class="view-pill">Administration</span>
+          <h1 class="view-title">Admin Portal</h1>
+          <p class="view-subtitle">Campus administration management interface.</p>
+        </div>
+      </div>
+
+      <div class="container" style="max-width: 600px; text-align: center; padding: 2rem 1.5rem 4rem;">
+        <div class="item-card" style="padding: 2.5rem 2rem;">
+          <div style="font-size: 2.75rem; margin-bottom: 1rem;">🔒</div>
+          <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--navy-secondary); margin-bottom: 0.75rem;">Dedicated Admin Portal</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
+            The Inside Indus Admin Dashboard is hosted on a dedicated administration portal with email verification.
+          </p>
+          <a href="admin.html" class="btn btn-primary" style="padding: 0.75rem 1.5rem; text-decoration: none;">Open Admin Portal →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       FOOTER
+       ====================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-layout">
+        <!-- Brand & Description -->
+        <div class="footer-col-brand">
+          <div class="footer-logo-row">
+            <div class="footer-logo-icon" aria-label="Inside Indus Navigation Logo">
+              <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 22px; height: 22px;">
+                <path d="M18 3.5C12.2 3.5 7.5 8.2 7.5 14C7.5 21.4 16.6 31.4 17.3 32.2C17.7 32.6 18.3 32.6 18.7 32.2C19.4 31.4 28.5 21.4 28.5 14C28.5 8.2 23.8 3.5 18 3.5Z" fill="#FFFFFF"/>
+                <circle cx="18" cy="10.5" r="2.1" fill="#C86D51"/>
+                <rect x="16.2" y="14.2" width="3.6" height="8.2" rx="1.8" fill="#C86D51"/>
+              </svg>
+            </div>
+            <h3 class="footer-brand">Inside Indus</h3>
+          </div>
+          <p class="footer-tagline">Built by students for students</p>
+          <p class="footer-inst">Inside Indus helps students quickly find classrooms, labs, faculty and important campus facilities.</p>
+
+          <!-- Student Creators -->
+          <div class="footer-creators">
+            <h4 class="footer-creators-title">Student Creators</h4>
+            <div class="footer-creator-item">
+              <span class="footer-creator-name">Simran D'souza</span>
+              <a href="mailto:simrandsouza.25.cse@iite.indusuni.ac.in" class="footer-creator-email">simrandsouza.25.cse@iite.indusuni.ac.in</a>
+            </div>
+            <div class="footer-creator-item">
+              <span class="footer-creator-name">Sandhya Jha</span>
+              <a href="mailto:jhasandhya.25.cse@iite.indusuni.ac.in" class="footer-creator-email">jhasandhya.25.cse@iite.indusuni.ac.in</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campus Navigation Links -->
+        <div>
+          <h4 class="footer-title">Campus Navigation</h4>
+          <ul class="footer-links">
+            <li><a class="footer-link" onclick="window.CampusGo.navigateTo('home')">Home</a></li>
+            <li><a class="footer-link" onclick="window.CampusGo.navigateTo('map')">Campus Map</a></li>
+            <li><a class="footer-link" onclick="window.CampusGo.navigateTo('free-rooms')">Free Classrooms</a></li>
+            <li><a class="footer-link" onclick="window.CampusGo.navigateTo('facilities')">Facilities & Cafes</a></li>
+          </ul>
+        </div>
+
+        <!-- Academic Directory Links -->
+        <div>
+          <h4 class="footer-title">Academic Directory</h4>
+          <ul class="footer-links">
+            <li><a class="footer-link" onclick="window.CampusGo.navigateTo('classrooms')">Classrooms / Lecture Halls</a></li>
+            <li><a class="footer-link" onclick="window.CampusGo.navigateTo('labs')">Laboratories</a></li>
+            <li><a class="footer-link" onclick="window.CampusGo.navigateTo('faculty')">Faculty Members</a></li>
+            <li><a href="admin.html" class="footer-link footer-admin-link">🔒 Admin Portal</a></li>
+          </ul>
+        </div>
+
+        <!-- Address -->
+        <div>
+          <h4 class="footer-title">Address</h4>
+          <address class="footer-address">
+            <strong>Indus University</strong><br>
+            Rancharda, via Shilaj,<br>
+            Ahmedabad, Gujarat 382115
+          </address>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>Inside Indus • Built by students for students • Indus University</span>
+        <span>Frontend only • Vanilla JavaScript & localStorage</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================================
+       MOBILE BOTTOM NAVIGATION BAR (Home | Map | Search | Profile)
+       ====================================================================== -->
+  <div class="mobile-bottom-bar">
+    <div class="bottom-nav-grid">
+      <a href="#home" class="bottom-nav-btn active" data-view="home">
+        <span class="bottom-nav-icon">🏠</span>
+        <span>Home</span>
+      </a>
+      <a href="#map" class="bottom-nav-btn" data-view="map">
+        <span class="bottom-nav-icon">🗺️</span>
+        <span>Map</span>
+      </a>
+      <a href="#search" class="bottom-nav-btn" data-view="search">
+        <span class="bottom-nav-icon">🔍</span>
+        <span>Search</span>
+      </a>
+      <a href="#profile" class="bottom-nav-btn" data-view="profile">
+        <span class="bottom-nav-icon">👤</span>
+        <span>Profile</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       MODALS
+       ====================================================================== -->
+
+  <!-- 1. ITEM DETAILS MODAL -->
+  <div class="modal-overlay" id="details-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="details-modal-title">Location Details</h3>
+        <button class="modal-close-btn" onclick="window.CampusGo.closeModal('details-modal')">&times;</button>
+      </div>
+      <div class="modal-body" id="details-modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="details-modal-fav-btn">☆ Add to Favorites</button>
+        <button class="btn btn-primary" id="details-modal-nav-btn">NAVIGATE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. INDOOR NAVIGATION INFO MODAL -->
+  <div class="modal-overlay" id="navigate-placeholder-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Campus Navigation</h3>
+        <button class="modal-close-btn" onclick="window.CampusGo.closeModal('navigate-placeholder-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 2rem 1.5rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🧭</div>
+        <h4 style="font-size: 1.25rem; color: var(--navy-secondary); margin-bottom: 0.5rem;" id="nav-modal-destination-title">Campus Destination</h4>
+        <p style="font-weight: 700; color: var(--navy-primary); margin-bottom: 0.75rem;">
+          Indoor navigation coming soon. Precise route data is being verified.
+        </p>
+        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5;">
+          Indus University corridors and stairs are currently undergoing physical survey. 
+          Indoor navigation will guide you step-by-step to your exact room without inventing routes or walking times.
+          Navigation structure: Building → Floor → Stair → Corridor → Room → Direction. Stairs only. No lifts.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="window.CampusGo.closeModal('navigate-placeholder-modal')">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. BUILDING FLOOR EXPLORER MODAL -->
+  <div class="modal-overlay" id="floor-explorer-modal">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="floor-explorer-title">Building Floors</h3>
+        <button class="modal-close-btn" onclick="window.CampusGo.closeModal('floor-explorer-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="floor-tabs-row" id="floor-explorer-tabs">
+          <!-- Floor tab buttons rendered dynamically -->
+        </div>
+        <div id="floor-explorer-content">
+          <!-- Floor rooms rendered dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="window.CampusGo.closeModal('floor-explorer-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SUBMIT FREE CLASSROOM MODAL (Improved Form) -->
+  <div class="modal-overlay" id="submit-free-room-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Submit Free Classroom</h3>
+        <button class="modal-close-btn" onclick="window.CampusGo.closeModal('submit-free-room-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="submit-free-room-form" onsubmit="return window.CampusGo.handleFreeRoomSubmit(event)">
+
+          <!-- OPTION A: Search classroom -->
+          <div class="form-group">
+            <label class="form-label">Option A — Search Classroom</label>
+            <input type="text" id="submit-room-search" class="form-input form-input-full" 
+                   placeholder="Type room name, e.g. LH-14, LH-27..."
+                   oninput="window.CampusGo.filterRoomSelector(this.value)">
+          </div>
+
+          <div class="form-divider-label">— OR use Option B —</div>
+
+          <!-- OPTION B: Building → Floor → Classroom -->
+          <div class="form-group">
+            <label class="form-label">Option B — Select by Building</label>
+            <select id="submit-room-building" class="form-select form-input-full" onchange="window.CampusGo.updateFloorOptions()">
+              <option value="">-- Select Building --</option>
+              <option value="MB">Main Building (MB)</option>
+              <option value="BB">Bhanwan Building (BB)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="floor-select-group" style="display:none;">
+            <label class="form-label">Floor</label>
+            <select id="submit-room-floor" class="form-select form-input-full" onchange="window.CampusGo.updateClassroomOptions()">
+              <option value="">-- Select Floor --</option>
+            </select>
+          </div>
+
+          <!-- Final classroom select (populated from either option) -->
+          <div class="form-group">
+            <label class="form-label">Classroom <span style="color: var(--status-occupied);">*</span></label>
+            <select id="submit-room-id" required class="form-select form-input-full">
+              <option value="">-- Select classroom --</option>
+              <option value="LH-4">LH-4 (Main Building • Ground Floor • AC)</option>
+              <option value="LH-14">LH-14 (Bhanwan Building • 1st Floor • AC)</option>
+              <option value="LH-102">LH-102 (Bhanwan Building • 1st Floor • Non-AC)</option>
+              <option value="LH-101">LH-101 (Bhanwan Building • 1st Floor • Non-AC)</option>
+              <option value="LH-12">LH-12 (Bhanwan Building • 1st Floor • AC)</option>
+              <option value="LH-27">LH-27 (Bhanwan Building • 3rd Floor • AC)</option>
+              <option value="LH-B526">LH-B526 (Bhanwan Building • 5th Floor • Non-AC)</option>
+              <option value="LAB-128">LAB-128 (Bhanwan Building • 1st Floor • AC)</option>
+              <option value="LAB-B227">LAB-B227 (Bhanwan Building • 2nd Floor • AC)</option>
+              <option value="LAB-4">LAB-4 (Bhanwan Building • 4th Floor • AC)</option>
+              <option value="B201">B201 (Bhanwan Building • 2nd Floor)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="submit-room-date">Date <span style="color: var(--status-occupied);">*</span></label>
+            <input type="date" id="submit-room-date" required class="form-input form-input-full">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="submit-room-start">Start Time <span style="color: var(--status-occupied);">*</span></label>
+              <input type="time" id="submit-room-start" required class="form-input form-input-full">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="submit-room-end">End Time <span style="color: var(--status-occupied);">*</span></label>
+              <input type="time" id="submit-room-end" required class="form-input form-input-full">
+            </div>
+          </div>
+
+          <div id="free-room-form-error" class="form-error-msg" style="display:none;"></div>
+
+          <div class="modal-footer" style="padding: 1rem 0 0; margin-top: 1rem;">
+            <button type="button" class="btn btn-outline" onclick="window.CampusGo.closeModal('submit-free-room-modal')">Cancel</button>
+            <button type="submit" id="submit-free-room-btn" class="btn btn-primary">Submit — Earn +5 Karma ⭐</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. FACULTY APPOINTMENT MODAL -->
+  <div class="modal-overlay" id="appointment-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="appointment-modal-title">Request Appointment</h3>
+        <button class="modal-close-btn" onclick="window.CampusGo.closeModal('appointment-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="appointment-form" onsubmit="return window.CampusGo.handleAppointmentSubmit(event)">
+
+          <div class="form-group">
+            <label class="form-label" for="appt-student-name">Your Name <span style="color: var(--status-occupied);">*</span></label>
+            <input type="text" id="appt-student-name" required class="form-input form-input-full" placeholder="Your full name">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="appt-student-email">Your Email <span style="color: var(--status-occupied);">*</span></label>
+            <input type="email" id="appt-student-email" required class="form-input form-input-full" placeholder="your.email@iite.indusuni.ac.in">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="appt-faculty-name">Faculty Member <span style="color: var(--status-occupied);">*</span></label>
+            <input type="text" id="appt-faculty-name" required class="form-input form-input-full" readonly>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="appt-date">Date <span style="color: var(--status-occupied);">*</span></label>
+              <input type="date" id="appt-date" required class="form-input form-input-full">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="appt-time">Time <span style="color: var(--status-occupied);">*</span></label>
+              <input type="time" id="appt-time" required class="form-input form-input-full">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="appt-reason">Reason / Message <span style="color: var(--status-occupied);">*</span></label>
+            <textarea id="appt-reason" required class="form-input form-input-full" rows="3" placeholder="Briefly describe the purpose of your appointment..."></textarea>
+          </div>
+
+          <div id="appt-form-notice" class="appt-notice-box">
+            <strong>Note:</strong> This is a frontend-only request. No email is sent automatically. 
+            Please also contact the faculty directly to confirm the appointment.
+          </div>
+
+          <div id="appt-form-error" class="form-error-msg" style="display:none;"></div>
+
+          <div class="modal-footer" style="padding: 1rem 0 0; margin-top: 1rem;">
+            <button type="button" class="btn btn-outline" onclick="window.CampusGo.closeModal('appointment-modal')">Cancel</button>
+            <button type="submit" id="appt-submit-btn" class="btn btn-primary">Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ADMIN FORM MODAL (Add/Edit) -->
+  <div class="modal-overlay" id="admin-form-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="admin-form-modal-title">Admin Item</h3>
+        <button class="modal-close-btn" onclick="window.CampusGo.closeModal('admin-form-modal')">&times;</button>
+      </div>
+      <div class="modal-body" id="admin-form-modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-box" id="global-toast"></div>
+
+  <!-- ======================================================================
+       SCRIPTS
+       ====================================================================== -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
